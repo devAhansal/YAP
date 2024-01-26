@@ -1,9 +1,11 @@
 <script setup>
-import TheWelcome from '../components/TheWelcome.vue'
+import Navbar from '../components/Navbar.vue'
+import Pet from '../components/Pet.vue'
 </script>
 
 <template>
   <main>
-    <TheWelcome />
+    <Navbar />
+    <Pet />
   </main>
 </template>
