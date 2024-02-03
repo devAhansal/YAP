@@ -135,7 +135,7 @@ const userNavigation = [
 ]
 
 const logout = async () => {
-  await axios.post('/logout');
+  await axios.post('api/logout');
   router.push('/');   
 }
 </script>
