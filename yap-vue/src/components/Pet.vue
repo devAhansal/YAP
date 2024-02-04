@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-white ">
+    <div class="bg-white py-12 sm:py-15">
         <div class="mx-auto grid max-w-7xl gap-x-8 gap-y-20 px-6 lg:px-8 xl:grid-cols-3">
             <div class="max-w-2xl">
                 <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Nos catégories d'animaux</h2>
@@ -18,7 +18,6 @@
             </ul>
         </div>
     </div>
-    <br><br>
 </template>
 
 <script setup>

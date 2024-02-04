@@ -1,13 +1,13 @@
 <template>
   <div class="flex min-h-full flex-1 flex-col justify-center">
     <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-      <a href="/">
+      <router-link :to="{ name: 'home' }">
         <img
           class="mx-auto h-20 w-auto"
           src="/public/images/logo.ico"
           alt="Votre entreprise"
         />
-      </a>
+      </router-link>
       <h2
         class="mt-2 text-center text-2xl font-bold leading-6 tracking-tight text-gray-900"
       >

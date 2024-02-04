@@ -10,6 +10,26 @@ const router = createRouter({
       component: HomeView
     },
     {
+      path: '/animaux',
+      name: 'animaux',
+      component: () => import('../views/AnimauxView.vue')
+    },
+    {
+      path: '/catalogue',
+      name: 'catalogue',
+      component: () => import('../views/CatalogueView.vue')
+    },
+    {
+      path: '/conseils',
+      name: 'conseils',
+      component: () => import('../views/ConseilsView.vue')
+    },
+    {
+      path: '/propos',
+      name: 'propos',
+      component: () => import('../views/ProposView.vue')
+    },
+    {
       path: '/login',
       name: 'login',
       component: () => import('../views/Auth/Login.vue')
@@ -24,11 +44,7 @@ const router = createRouter({
       name: 'dashboard',
       component: () => import('../views/DashboardView.vue')
     },
-    {
-      path: '/page2',
-      name: 'page2',
-      component: () => import('')
-    }
+    
   ]
 })
 

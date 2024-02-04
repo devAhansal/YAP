@@ -4,10 +4,10 @@ import { Dialog, DialogPanel } from "@headlessui/vue";
 import { Bars3Icon, XMarkIcon } from "@heroicons/vue/24/outline";
 
 const navigation = [
-  { name: "Animaux", href: "#" },
-  { name: "Catalogue", href: "#" },
-  { name: "Conseils", href: "#" },
-  { name: "À propos", href: "#" },
+  { name: "Animaux", routerName: "animaux" },
+  { name: "Catalogue", routerName: "catalogue" },
+  { name: "Conseils", routerName: "conseils" },
+  { name: "À propos", routerName: "propos" },
 ];
 
 const mobileMenuOpen = ref(false);
@@ -22,7 +22,7 @@ const mobileMenuOpen = ref(false);
       >
         <div class="flex lg:flex-1">
           <a href="#" class="-m-1.5 p-1.5">
-            <span class="sr-only">Your Company</span>
+            <span class="sr-only">YAP</span>
             <img class="h-16 w-auto" src="/public/images/logo.ico" alt="" />
           </a>
         </div>
@@ -37,12 +37,12 @@ const mobileMenuOpen = ref(false);
           </button>
         </div>
         <div class="hidden lg:flex lg:gap-x-12">
-          <a
+          <router-link
             v-for="item in navigation"
             :key="item.name"
-            :href="item.href"
+            :to="{ name: item.routerName }"
             class="text-sm font-semibold leading-6 text-gray-900"
-            >{{ item.name }}</a
+            >{{ item.name }}</router-link
           >
         </div>
         <div class="hidden lg:flex lg:flex-1 lg:justify-end">
