@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-full">
     <navbar-admin routeCurrentName="dashboardAnimaux" />
-    
+    <Toast />
 
     <header class="bg-white shadow">
       <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
@@ -135,8 +135,25 @@
                             />
                           </div>
                         </div>
-
-                        <div class="sm:col-span-3">
+                        <div class="sm:col-span-1">
+                          <label
+                            for="date_de_naissance_animal"
+                            class="block text-sm font-medium leading-6 text-gray-900"
+                            >Couleur</label
+                          >
+                          <div class="mt-2">
+                            <!-- <input
+                              v-model="form.couleur_animal"
+                              id="couleur_animal"
+                              name="couleur_animal"
+                              type="color"
+                              autocomplete="couleur_animal"
+                              class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+                           /> -->
+                            <ColorPicker v-model="form.couleur_animal" />
+                          </div>
+                        </div>
+                        <div class="sm:col-span-2">
                           <label
                             for="pet-category"
                             class="block text-sm font-medium leading-6 text-gray-900"
@@ -222,6 +239,7 @@
 
                 <div class="mt-6 flex items-center justify-end gap-x-6">
                   <button
+                    @click="resetForm"
                     type="button"
                     class="text-sm font-semibold leading-6 text-gray-900"
                   >
@@ -248,6 +266,9 @@ import { ref, onMounted } from "vue";
 import { ProductService } from "@/service/ProductService";
 import axios from "axios";
 import { useRouter } from "vue-router";
+import Toast from "primevue/toast";
+import { useToast } from "primevue/usetoast";
+const toast = useToast();
 
 const router = useRouter();
 
@@ -259,6 +280,7 @@ const form = ref({
   prix_animal: "",
   date_de_naissance_animal: "",
   type_animal: "",
+  couleur_animal: "",
   image_animal: null, // Définissez image_animal sur null
 });
 
@@ -266,39 +288,56 @@ const onselectedFile = (event) => {
   form.image_animal = event.target.files[0];
 };
 
-
 const handleAjouterAnimal = async () => {
   const formData = new FormData();
-  formData.append("nom_animal", form.value.nom_animal);
+  formData.append("nom_animal", String(form.value.nom_animal));
   formData.append("prix_animal", form.value.prix_animal);
+  formData.append("couleur_animal", String(form.value.couleur_animal));
   formData.append(
     "date_de_naissance_animal",
     form.value.date_de_naissance_animal
   );
-  formData.append("type_animal", form.value.type_animal);
+  formData.append("type_animal", String(form.value.type_animal));
   formData.append("image_animal", form.image_animal);
-
-  await axios.post("api/animal", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  }) .then(response => {
-        
-        resetForm();
+  console.log(formData);
+  await axios
+    .post("api/animal", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
     })
-    .catch(error => {
-        
+    .then((response) => {
+      toast.add({
+        severity: "success",
+        summary: response.data.message,
+        detail: response.data.message,
+        life: 5000,
+      });
+      resetForm();
+    })
+    .catch((error) => {
+      if (error.response.data.errors) {
+        const errors = error.response.data.errors;
+        Object.values(errors).forEach((error) => {
+          toast.add({
+            severity: "error",
+            summary: "Erreur de validation",
+            detail: error[0],
+            life: 5000,
+          });
+        });
+      }
     });
 };
 
 const resetForm = () => {
-      // Reset each field to its initial state
-      nom_animal.value = '';
-      prix_animal.value = '';
-      date_de_naissance_animal.value = '';
-      type_animal.value = '';
-      image_animal.value = null; // Reset the image field to null
-    };
+  form.value.nom_animal = "";
+  form.value.prix_animal = "";
+  form.value.date_de_naissance_animal = "";
+  form.value.type_animal = "";
+  form.value.couleur_animal = "";
+  form.value.image_animal = null;
+};
 
 const products = ref();
 const formatCurrency = (value) => {

@@ -32,12 +32,15 @@ class AnimalController extends Controller
             'prix_animal.required' => 'Le champ prix est obligatoire.',
             'date_de_naissance_animal.required' => 'Le champ Date de naissance est obligatoire.',
             'type_animal.required' => 'Le champ Catégorie est obligatoire.',
+            'couleur_animal.required' => 'Le champ Couleur est obligatoire.',
             'image_animal.mimes' => 'le champ photo doit être fichier de type:doc,docx,pdf,jpeg,jpg,png,gif',
+
         ];
         //
         $validator = Validator::make($request->all(), [
             'nom_animal' => ['required', 'max:100'],
             'prix_animal' => ['required'],
+            'couleur_animal' => ['required'],
             'date_de_naissance_animal' => ['required'],
             'type_animal' => ['required'],
             'image_animal' => ['mimes:doc,docx,pdf,jpeg,jpg,png,gif|max:2048'],
@@ -58,7 +61,15 @@ class AnimalController extends Controller
             $filename =  time() . "_" . $valueImage->getClientOriginalName();
             $valueImage->move('uploads', $filename);
         }
-
+     
+        $Animal = Animal::create([
+            'nom_animal' => $request->nom_animal,
+            'type_animal' => $request->type_animal,
+            'couleur_animal' => $request->couleur_animal,
+            'image_animal' => $filename,
+            'date_de_naissance_animal' => $request->date_de_naissance_animal,
+            'prix_animal' => $request->prix_animal,
+        ]);
         return response()->json([
             'message' => 'Animal a été ajouté avec succès',
         ]);
