@@ -5,14 +5,12 @@
       class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8 flex justify-center items-center flex-wrap"
     >
       <div class="card">
-        <DataView :value="products" paginator :rows="5" :layout="layout">
+        <DataView :value="Animaux" paginator :rows="5" :layout="layout">
           <template #header>
-            <div class="flex justify-end">
-              <DataViewLayoutOptions  v-model="layout" />
-            </div>
+            
           </template>
 
-          <template #list="slotProps">
+          <!-- <template #list="slotProps">
             <div class="flex flex-wrap">
               <div
                 v-for="(item, index) in slotProps.items"
@@ -28,8 +26,9 @@
                 >
                   <img
                     class="w-9/12 sm:w-[16rem] xl:w-[10rem] shadow-md block xl:block mx-auto rounded"
-                    :src="`https://primefaces.org/cdn/primevue/images/product/${item.image}`"
-                    :alt="item.name"
+                    :src="`http://localhost:8000/uploads/${item.image_animal}`"
+                    :alt="item.nom_animal"
+                  
                   />
                   <div
                     class="flex flex-col sm:flex-row justify-between items-center xl:items-start flex-1 gap-4"
@@ -40,29 +39,22 @@
                       <div
                         class="text-2xl font-bold text-surface-900 dark:text-surface-0"
                       >
-                        {{ item.name }}
+                        {{ item.nom_animal }}
                       </div>
-                      <Rating
-                        :modelValue="item.rating"
-                        readonly
-                        :cancel="false"
-                      ></Rating>
+                    
                       <div class="flex items-center gap-3">
                         <span class="flex items-center gap-2">
                           <i class="pi pi-tag"></i>
-                          <span class="font-semibold">{{ item.category }}</span>
+                          <span class="font-semibold">{{ item.type_animal }}</span>
                         </span>
-                        <Tag
-                          :value="item.inventoryStatus"
-                          :severity="getSeverity(item)"
-                        ></Tag>
+                     
                       </div>
                     </div>
                     <div
                       class="flex sm:flex-col items-center sm:items-end gap-3 sm:gap-2"
                     >
                       <span class="text-2xl font-semibold"
-                        >${{ item.price }}</span
+                        >${{ item.prix_animal }}</span
                       >
                       <Button
                         icon="pi pi-shopping-cart"
@@ -74,7 +66,7 @@
                 </div>
               </div>
             </div>
-          </template>
+          </template> -->
 
           <template #grid="slotProps">
             <div class="flex flex-wrap">
@@ -91,29 +83,22 @@
                   >
                     <div class="flex items-center gap-2">
                       <i class="pi pi-tag"></i>
-                      <span class="font-semibold">{{ item.category }}</span>
+                      <span class="font-semibold">{{ item.type_animal }}</span>
                     </div>
-                    <Tag
-                      :value="item.inventoryStatus"
-                      :severity="getSeverity(item)"
-                    ></Tag>
+                   
                   </div>
                   <div class="flex flex-col items-center gap-3 py-5">
                     <img
-                      class="w-9/12 shadow-md rounded"
-                      src="https://cdn.futura-sciences.com/buildsv6/images/largeoriginal/8/5/8/858743bb35_50169458_chien-min.jpg"
-                      :alt="item.name"
+                      class="w-9/12 shadow-md rounded animal-image"
+                      :src="`http://localhost:8000/uploads/${item.image_animal}`"
+                      :alt="item.nom_animal"
                     />
-                    <div class="text-2xl font-bold">{{ item.name }}</div>
-                    <Rating
-                      :modelValue="item.rating"
-                      readonly
-                      :cancel="false"
-                    ></Rating>
+                    <div class="text-2xl font-bold">{{ item.nom_animal }}</div>
+                   
                   </div>
                   <div class="flex items-center justify-between">
                     <span class="text-2xl font-semibold"
-                      >{{ item.price }} MAD</span
+                      >{{ item.prix_animal }} MAD</span
                     >
                     <Button
                       icon="pi pi-shopping-cart"
@@ -138,11 +123,25 @@ import { ref, onMounted } from "vue";
 import { ProductService } from "@/service/ProductService";
 import DataViewLayoutOptions from 'primevue/dataviewlayoutoptions'   // optional
 
+import axios from "axios";
 onMounted(() => {
-  ProductService.getProducts().then(
-    (data) => (products.value = data)
-  );
+  ProductService.getProducts().then((data) => (products.value = data));
+  getAnimals();
 });
+
+const Animaux = ref();
+
+const getAnimals = async () => {
+  try {
+    const response = await axios.get("api/animal");
+    Animaux.value = response.data;
+  } catch (error) {
+    console.error(
+      "Erreur lors de la récupération des détails de l'animal:",
+      error
+    );
+  }
+};
 
 const products = ref();
 const layout = ref("grid");
@@ -158,3 +157,9 @@ const getSeverity = (product) => {
   }
 };
 </script>
+<style>
+.animal-image {
+  width: 400px; /* Set width to 100% to fill the container */
+  height: 200px; /* Adjust the maximum height as needed */
+}
+</style>

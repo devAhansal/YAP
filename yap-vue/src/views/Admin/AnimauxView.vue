@@ -15,7 +15,7 @@
             <TabPanel header="Gérer Animaux">
               <div class="card">
                 <DataTable
-                  :value="products"
+                  :value="Animaux"
                   paginator
                   :rows="5"
                   tableStyle="min-width: 50rem"
@@ -24,46 +24,53 @@
                     <div
                       class="flex flex-wrap align-items-center justify-content-between gap-2"
                     >
-                      <!-- <span class="text-xl text-900 font-bold">Products</span>
-                      -->
+                      <!-- Header content -->
                     </div>
                   </template>
-                  <Column field="name" header="Name"></Column>
-                  <Column header="Image">
+
+                  <Column field="nom_animal" header="Nom">
+                    <template #body="slotProps">
+                      {{ slotProps.data.nom_animal }}
+                    </template>
+                  </Column>
+                  <Column field="type_animal" header="Type">
+                    <template #body="slotProps">
+                      {{ slotProps.data.type_animal }}
+                    </template>
+                  </Column>
+                  <Column field="couleur_animal" header="Couleur">
+                    <template #body="slotProps">
+                      <ColorPicker  v-model="slotProps.data.couleur_animal"  disabled />
+                    </template>
+                  </Column>
+                  <Column field="image_animal" header="Image">
                     <template #body="slotProps">
                       <img
-                        src="https://cdn.futura-sciences.com/buildsv6/images/largeoriginal/8/5/8/858743bb35_50169458_chien-min.jpg"
-                        :alt="slotProps.data.image"
+                        :src="`http://localhost:8000/uploads/${slotProps.data.image_animal}`"
+                        :alt="slotProps.data.nom_animal"
                         class="w-12 border-round"
                       />
                     </template>
                   </Column>
-                  <Column field="price" header="Price">
+                  <Column
+                    field="date_de_naissance_animal"
+                    header="Date de Naissance"
+                  >
                     <template #body="slotProps">
-                      {{ formatCurrency(slotProps.data.price) }}
+                      {{ slotProps.data.date_de_naissance_animal }}
                     </template>
                   </Column>
-                  <Column field="category" header="Category"></Column>
-                  <Column field="rating" header="Reviews">
+                  <Column field="prix_animal" header="Prix">
                     <template #body="slotProps">
-                      <Rating
-                        :modelValue="slotProps.data.rating"
-                        readonly
-                        :cancel="false"
-                      />
+                      {{ slotProps.data.prix_animal }} MAD
                     </template>
                   </Column>
-                  <Column header="Status">
-                    <template #body="slotProps">
-                      <Tag
-                        :value="slotProps.data.inventoryStatus"
-                        :severity="getSeverity(slotProps.data)"
-                      />
-                    </template>
-                  </Column>
+
+                  <!-- Ajoutez d'autres colonnes selon vos besoins -->
+
                   <template #footer>
                     In total there are
-                    {{ products ? products.length : 0 }} products.
+                    {{ Animaux ? Animaux.length : 0 }} Animaux.
                   </template>
                 </DataTable>
               </div>
@@ -274,6 +281,7 @@ const router = useRouter();
 
 onMounted(() => {
   ProductService.getProducts().then((data) => (products.value = data));
+  getAnimals();
 });
 const form = ref({
   nom_animal: "",
@@ -283,6 +291,20 @@ const form = ref({
   couleur_animal: "",
   image_animal: null, // Définissez image_animal sur null
 });
+
+const Animaux = ref();
+
+const getAnimals = async () => {
+  try {
+    const response = await axios.get("api/animal");
+    Animaux.value = response.data;
+  } catch (error) {
+    console.error(
+      "Erreur lors de la récupération des détails de l'animal:",
+      error
+    );
+  }
+};
 
 const onselectedFile = (event) => {
   form.image_animal = event.target.files[0];
@@ -314,6 +336,7 @@ const handleAjouterAnimal = async () => {
         life: 5000,
       });
       resetForm();
+      getAnimals();
     })
     .catch((error) => {
       if (error.response.data.errors) {
@@ -356,6 +379,4 @@ const getSeverity = (product) => {
       return null;
   }
 };
-
-const value3 = ref(10.5);
 </script>

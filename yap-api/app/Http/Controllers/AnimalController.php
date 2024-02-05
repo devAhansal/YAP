@@ -15,7 +15,8 @@ class AnimalController extends Controller
      */
     public function index()
     {
-        //
+        $Animaux = Animal::all();
+        return Response()->json($Animaux);
     }
 
     /**
@@ -61,7 +62,7 @@ class AnimalController extends Controller
             $filename =  time() . "_" . $valueImage->getClientOriginalName();
             $valueImage->move('uploads', $filename);
         }
-     
+
         $Animal = Animal::create([
             'nom_animal' => $request->nom_animal,
             'type_animal' => $request->type_animal,
