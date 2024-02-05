@@ -16,5 +16,8 @@ class Catalogues_animals extends Model
     {
         return $this->hasMany(Animal::class, "animal_id", "id");
     }
-    
+    public function catalogues()
+    {
+        return $this->hasMany(Catalogue::class, "catalogue_id", "id");
+    }
 }

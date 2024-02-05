@@ -1,11 +1,11 @@
 <script setup>
-import Navbar from '../components/Navbar.vue'
+import NavbarHome from '../components/NavbarHome.vue'
 import Pet from '../components/Pet.vue'
 </script>
 
 <template>
   <main>
-    <Navbar />
-    <Pet />
+    <navbar-home />
+    <pet />
   </main>
 </template>

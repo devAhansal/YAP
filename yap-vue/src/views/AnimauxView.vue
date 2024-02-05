@@ -1,5 +1,5 @@
 <template>
-  <navbar-detail routeCurrentName="animaux" />
+  <navbar-client routeCurrentName="animaux" />
   <main>
     <div
       class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8 flex justify-center items-center flex-wrap"
@@ -133,9 +133,10 @@
 
 <script setup>
 // import CardBuy from "../components/CardBuy.vue";
-import NavbarDetail from "../components/NavbarDetail.vue";
+import NavbarClient from "../components/NavbarClient.vue";
 import { ref, onMounted } from "vue";
 import { ProductService } from "@/service/ProductService";
+import DataViewLayoutOptions from 'primevue/dataviewlayoutoptions'   // optional
 
 onMounted(() => {
   ProductService.getProducts().then(
@@ -150,13 +151,8 @@ const getSeverity = (product) => {
   switch (product.inventoryStatus) {
     case "EN STOCK":
       return "success";
-
-    case "FAIBLE STOCK":
-      return "warning";
-
     case "EN RUPTURE DE STOCK":
       return "danger";
-
     default:
       return null;
   }

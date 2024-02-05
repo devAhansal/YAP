@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Animal;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class AnimalController extends Controller
 {
@@ -25,7 +26,42 @@ class AnimalController extends Controller
      */
     public function store(Request $request)
     {
+        $messages = [
+            'nom_animal.required' => 'Le champ nom est obligatoire.',
+            'nom_animal.max' => 'Le champ nom est dépasse la taille max',
+            'prix_animal.required' => 'Le champ prix est obligatoire.',
+            'date_de_naissance_animal.required' => 'Le champ Date de naissance est obligatoire.',
+            'type_animal.required' => 'Le champ Catégorie est obligatoire.',
+            'image_animal.mimes' => 'le champ photo doit être fichier de type:doc,docx,pdf,jpeg,jpg,png,gif',
+        ];
         //
+        $validator = Validator::make($request->all(), [
+            'nom_animal' => ['required', 'max:100'],
+            'prix_animal' => ['required'],
+            'date_de_naissance_animal' => ['required'],
+            'type_animal' => ['required'],
+            'image_animal' => ['mimes:doc,docx,pdf,jpeg,jpg,png,gif|max:2048'],
+        ], $messages);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+        $filename = '';
+        if (empty($request->file('image_animal'))) {
+            $errors = array(
+                'name' => array(
+                    'Le champ image est obligatoire.',
+                )
+            );
+            return response()->json(['errors' =>  $errors], 422);
+        } else {
+            $valueImage = $request->file('image_animal');
+            $filename =  time() . "_" . $valueImage->getClientOriginalName();
+            $valueImage->move('uploads', $filename);
+        }
+
+        return response()->json([
+            'message' => 'Animal a été ajouté avec succès',
+        ]);
     }
 
     /**

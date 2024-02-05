@@ -14,5 +14,8 @@ class Catalogue extends Model
         'image_catalogue',
         'nom_catalogue',
     ];
-    
+    public function Catalogues_animals()
+    {
+        return $this->belongsTo(Catalogues_animals::class, 'catalogue_id', 'id');
+    }
 }

@@ -16,4 +16,8 @@ class Animal extends Model
         'date_de_publier',
         'prix',
     ];
+    public function Catalogues_animals()
+    {
+        return $this->belongsTo(Catalogues_animals::class, 'animal_id', 'id');
+    }
 }
