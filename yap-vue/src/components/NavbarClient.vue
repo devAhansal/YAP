@@ -1,4 +1,46 @@
+<script setup>
+import { defineProps, onMounted, ref } from "vue";
+import { useAuthStore } from "../views/stores/auth";
+import { useToast } from "primevue/usetoast";
+import MonDialog from 'primevue/dialog';
+
+
+import {
+  Dialog,
+  DialogPanel,
+  PopoverGroup,
+  TransitionChild,
+  TransitionRoot,
+} from "@headlessui/vue";
+import {
+  Bars3Icon,
+  MagnifyingGlassIcon,
+  ShoppingBagIcon,
+  XMarkIcon,
+} from "@heroicons/vue/24/outline";
+
+const toast = useToast();
+const authStore = useAuthStore();
+const props = defineProps({
+  // Define your props here
+  routeCurrentName: String,
+});
+const open = ref(false);
+const navigation = {
+  pages: [
+    { name: "Catalogue", routeName: "catalogue" },
+    { name: "Conseils", routeName: "conseils" },
+    { name: "À propos", routeName: "propos" },
+  ],
+};
+const visible = ref(false);
+onMounted(async () => {
+  await authStore.getUser();
+});
+</script>
 <template>
+ 
+
   <div class="bg-white">
     <!-- Mobile menu -->
     <TransitionRoot as="template" :show="open">
@@ -59,12 +101,12 @@
               </div>
 
               <div class="space-y-6 border-t border-gray-200 px-4 py-6">
-                <div class="flow-root" v-if="User && User.name">
+                <div class="flow-root" v-if="authStore.user">
                   <router-link
                     :to="{ name: 'home' }"
                     class="-m-2 block p-2 font-medium text-gray-900"
                   >
-                    {{ User.name }}
+                    {{ authStore.user.name }}
                   </router-link>
                 </div>
                 <div class="flow-root" v-else>
@@ -147,9 +189,9 @@
               >
                 <router-link
                   :to="{ name: '' }"
-                  v-if="User && User.name"
+                  v-if="authStore.user"
                   class="text-sm font-medium text-gray-700 hover:text-gray-800"
-                  >{{ User.name }}
+                  >{{ authStore.user.name }}
                 </router-link>
                 <router-link
                   :to="{ name: 'login' }"
@@ -158,19 +200,18 @@
                   >Se connecter
                 </router-link>
                 <span class="h-6 w-px bg-gray-200" aria-hidden="true" />
-
                 <router-link
-                  v-if="User && User.name"
-                  :to="{ name: '' }"
-                  @click="logout"
-                  class="text-sm font-medium text-gray-700 hover:text-gray-800"
-                  >Se déconnecter
-                </router-link>
-                <router-link
-                  v-else
+                  v-if="!authStore.user"
                   :to="{ name: 'register' }"
                   class="text-sm font-medium text-gray-700 hover:text-gray-800"
                   >Inscrivez-vous
+                </router-link>
+                <router-link
+                  v-else
+                  :to="{ name: '' }"
+                  @click="authStore.handleLogout()"
+                  class="text-sm font-medium text-gray-700 hover:text-gray-800"
+                  >Se déconnecter
                 </router-link>
               </div>
 
@@ -189,17 +230,9 @@
                 </a>
               </div>
 
-              <!-- Search -->
-              <div class="flex lg:ml-6">
-                <a href="#" class="p-2 text-gray-400 hover:text-gray-500">
-                  <span class="sr-only">Search</span>
-                  <MagnifyingGlassIcon class="h-6 w-6" aria-hidden="true" />
-                </a>
-              </div>
-
               <!-- Cart -->
               <div class="ml-4 flow-root lg:ml-6">
-                <a href="#" class="group -m-2 flex items-center p-2">
+                <a href="#" @click="visible = true" class="group -m-2 flex items-center p-2">
                   <ShoppingBagIcon
                     class="h-6 w-6 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
                     aria-hidden="true"
@@ -217,59 +250,15 @@
       </nav>
     </header>
   </div>
+
+  <MonDialog
+    v-model:visible="visible"
+    modal
+    header="Header"
+    :style="{ width: '50rem' }"
+    :breakpoints="{ '1199px': '75vw', '575px': '90vw' }"
+  >
+    
+
+  </MonDialog>
 </template>
-
-<script setup>
-import { defineProps } from "vue";
-import { ref, onMounted } from "vue";
-import axios from "axios";
-import { useToast } from "primevue/usetoast";
-const toast = useToast();
-import {
-  Dialog,
-  DialogPanel,
-  PopoverGroup,
-  TransitionChild,
-  TransitionRoot,
-} from "@headlessui/vue";
-import {
-  Bars3Icon,
-  MagnifyingGlassIcon,
-  ShoppingBagIcon,
-  XMarkIcon,
-} from "@heroicons/vue/24/outline";
-
-const props = defineProps({
-  // Define your props here
-  routeCurrentName: String,
-});
-
-const navigation = {
-  pages: [
-    { name: "Catalogue", routeName: "catalogue" },
-    { name: "Conseils", routeName: "conseils" },
-    { name: "À propos", routeName: "propos" },
-  ],
-};
-
-const User = ref(null);
-
-const getUsers = async () => {
-  try {
-    const response = await axios.get("api/user");
-    User.value = response.data;
-  } catch (error) {
-    console.error("Error fetching user data:", error);
-    User.value = null;
-  }
-};
-const logout = async () => {
-  await axios.post("api/logout");
-  router.push("/");
-};
-onMounted(() => {
-  getUsers();
-});
-
-const open = ref(false);
-</script>

@@ -2,13 +2,14 @@
 import { ref } from "vue";
 import { Dialog, DialogPanel } from "@headlessui/vue";
 import { Bars3Icon, XMarkIcon } from "@heroicons/vue/24/outline";
+import { useAuthStore } from "../views/stores/auth";
 
 const navigation = [
   { name: "Catalogue", routerName: "catalogue" },
   { name: "Conseils", routerName: "conseils" },
   { name: "À propos", routerName: "propos" },
 ];
-
+const authStore = useAuthStore();
 const mobileMenuOpen = ref(false);
 </script>
 
@@ -46,6 +47,7 @@ const mobileMenuOpen = ref(false);
         </div>
         <div class="hidden lg:flex lg:flex-1 lg:justify-end">
           <router-link
+            v-if="!authStore.user"
             :to="{ name: 'login' }"
             class="text-sm font-semibold leading-6 text-gray-900"
             >Se connecter <span aria-hidden="true">&rarr;</span></router-link
@@ -93,6 +95,7 @@ const mobileMenuOpen = ref(false);
               </div>
               <div class="py-6">
                 <router-link
+                  v-if="!authStore.user"
                   :to="{ name: 'login' }"
                   class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                   >Se connecter
@@ -146,7 +149,7 @@ const mobileMenuOpen = ref(false);
             et chatons aux oiseaux exotiques et aux reptiles fascinants. Trouvez
             votre nouveau meilleur ami dès aujourd'hui !
           </p>
-          <div class="mt-10 flex items-center justify-center gap-x-6">
+          <!-- <div class="mt-10 flex items-center justify-center gap-x-6">
             <a
               href="#"
               class="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
@@ -155,7 +158,7 @@ const mobileMenuOpen = ref(false);
             <a href="#" class="text-sm font-semibold leading-6 text-gray-900"
               >En savoir plus <span aria-hidden="true">→</span></a
             >
-          </div>
+          </div> -->
         </div>
       </div>
       <div

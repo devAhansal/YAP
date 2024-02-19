@@ -11,6 +11,7 @@ import "primevue/resources/themes/lara-light-blue/theme.css";
 import "primeicons/primeicons.css";
 import "primevue/resources/primevue.min.css";
 import ToastService from "primevue/toastservice";
+import ConfirmationService from 'primevue/confirmationservice';
 
 const pinia = createPinia();
 pinia.use(({ store }) => {
@@ -22,5 +23,7 @@ app.use(pinia);
 app.use(router);
 app.use(PrimeVue);
 app.use(ToastService);
+app.use(ConfirmationService);
+
 
 app.mount("#app");
