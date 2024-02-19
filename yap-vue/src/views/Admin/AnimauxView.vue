@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-full">
     <navbar-admin routeCurrentName="dashboardAnimaux" />
-    <Toast />
+   
 
     <header class="bg-white shadow">
       <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
@@ -273,7 +273,6 @@ import { ref, onMounted } from "vue";
 import { ProductService } from "@/service/ProductService";
 import axios from "axios";
 import { useRouter } from "vue-router";
-import Toast from "primevue/toast";
 import { useToast } from "primevue/usetoast";
 const toast = useToast();
 

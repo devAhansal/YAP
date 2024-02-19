@@ -1,5 +1,5 @@
 <template>
-  <navbar-client routeCurrentName="animaux" />
+  <navbar-client routeCurrentName="catalogue" />
   <main>
     <div
       class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8 flex justify-center items-center flex-wrap"
@@ -160,6 +160,7 @@ const getSeverity = (product) => {
 <style>
 .animal-image {
   width: 400px; /* Set width to 100% to fill the container */
+  height: auto; /* Let the height adjust proportionally */
   height: 200px; /* Adjust the maximum height as needed */
 }
 </style>

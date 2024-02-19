@@ -10,14 +10,9 @@ const router = createRouter({
       component: HomeView,
     },
     {
-      path: "/animaux",
-      name: "animaux",
-      component: () => import("../views/AnimauxView.vue"),
-    },
-    {
       path: "/catalogue",
       name: "catalogue",
-      component: () => import("../views/CatalogueView.vue"),
+      component: () => import("../views/AnimauxView.vue"),
     },
     {
       path: "/conseils",
@@ -40,6 +35,16 @@ const router = createRouter({
       component: () => import("../views/Auth/Register.vue"),
     },
     {
+      path: "/forgot-password",
+      name: "forgotpassword",
+      component: () => import("../views/Auth/ForgotPassword.vue"),
+    },
+    {
+      path: "/password-reset/:token",
+      name: "ResetPassword",
+      component: () => import("../views/Auth/ResetPassword.vue"),
+    },
+    {
       path: "/dashboard",
       name: "dashboard",
       component: () => import("../views/Admin/DashboardView.vue"),
@@ -48,11 +53,6 @@ const router = createRouter({
       path: "/dashboard/animaux",
       name: "dashboardAnimaux",
       component: () => import("../views/Admin/AnimauxView.vue"),
-    },
-    {
-      path: "/dashboard/catalogues",
-      name: "dashboardCatalogues",
-      component: () => import("../views/Admin/CataloguesView.vue"),
     },
     {
       path: "/dashboard/partenaires",

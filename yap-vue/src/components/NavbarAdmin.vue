@@ -179,7 +179,6 @@ const user = {
 const navigation = [
   { name: "Tableau de bord", routeName: "dashboard", current: false },
   { name: "Animaux", routeName: "dashboardAnimaux", current: false },
-  { name: "Catalogues", routeName: "dashboardCatalogues", current: false },
   { name: "Commandes", routeName: "dashboardCommandes", current: false },
   { name: "Partenaires", routeName: "dashboardPartenaires", current: false },
 ];

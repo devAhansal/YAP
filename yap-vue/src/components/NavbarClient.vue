@@ -59,7 +59,15 @@
               </div>
 
               <div class="space-y-6 border-t border-gray-200 px-4 py-6">
-                <div class="flow-root">
+                <div class="flow-root" v-if="User && User.name">
+                  <router-link
+                    :to="{ name: 'home' }"
+                    class="-m-2 block p-2 font-medium text-gray-900"
+                  >
+                    {{ User.name }}
+                  </router-link>
+                </div>
+                <div class="flow-root" v-else>
                   <router-link
                     :to="{ name: 'login' }"
                     class="-m-2 block p-2 font-medium text-gray-900"
@@ -138,13 +146,28 @@
                 class="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6"
               >
                 <router-link
+                  :to="{ name: '' }"
+                  v-if="User && User.name"
+                  class="text-sm font-medium text-gray-700 hover:text-gray-800"
+                  >{{ User.name }}
+                </router-link>
+                <router-link
                   :to="{ name: 'login' }"
+                  v-else
                   class="text-sm font-medium text-gray-700 hover:text-gray-800"
                   >Se connecter
                 </router-link>
                 <span class="h-6 w-px bg-gray-200" aria-hidden="true" />
 
                 <router-link
+                  v-if="User && User.name"
+                  :to="{ name: '' }"
+                  @click="logout"
+                  class="text-sm font-medium text-gray-700 hover:text-gray-800"
+                  >Se déconnecter
+                </router-link>
+                <router-link
+                  v-else
                   :to="{ name: 'register' }"
                   class="text-sm font-medium text-gray-700 hover:text-gray-800"
                   >Inscrivez-vous
@@ -197,9 +220,11 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
 import { defineProps } from "vue";
-
+import { ref, onMounted } from "vue";
+import axios from "axios";
+import { useToast } from "primevue/usetoast";
+const toast = useToast();
 import {
   Dialog,
   DialogPanel,
@@ -221,12 +246,30 @@ const props = defineProps({
 
 const navigation = {
   pages: [
-    { name: "Animaux", routeName: "animaux" },
     { name: "Catalogue", routeName: "catalogue" },
     { name: "Conseils", routeName: "conseils" },
     { name: "À propos", routeName: "propos" },
   ],
 };
+
+const User = ref(null);
+
+const getUsers = async () => {
+  try {
+    const response = await axios.get("api/user");
+    User.value = response.data;
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    User.value = null;
+  }
+};
+const logout = async () => {
+  await axios.post("api/logout");
+  router.push("/");
+};
+onMounted(() => {
+  getUsers();
+});
 
 const open = ref(false);
 </script>

@@ -4,7 +4,6 @@ import { Dialog, DialogPanel } from "@headlessui/vue";
 import { Bars3Icon, XMarkIcon } from "@heroicons/vue/24/outline";
 
 const navigation = [
-  { name: "Animaux", routerName: "animaux" },
   { name: "Catalogue", routerName: "catalogue" },
   { name: "Conseils", routerName: "conseils" },
   { name: "À propos", routerName: "propos" },
@@ -84,12 +83,12 @@ const mobileMenuOpen = ref(false);
           <div class="mt-6 flow-root">
             <div class="-my-6 divide-y divide-gray-500/10">
               <div class="space-y-2 py-6">
-                <a
+                <router-link
                   v-for="item in navigation"
                   :key="item.name"
-                  :href="item.href"
+                  :to="{ name: item.routerName }"
                   class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                  >{{ item.name }}</a
+                  >{{ item.name }}</router-link
                 >
               </div>
               <div class="py-6">

@@ -6,7 +6,7 @@
         <a href="#">
           <img
             class="p-8 rounded-t-lg" style="height: 600px;width: 100%;" 
-            src="C:\xampp\htdocs\YAP\yap-vue\public\images\cute-little-dog-pet-shop-with-owner.jpg"
+            src="/public/images/cute-little-dog-pet-shop-with-owner.jpg"
             alt="product image"
           />
         </a>
