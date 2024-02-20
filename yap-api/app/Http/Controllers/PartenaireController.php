@@ -59,10 +59,11 @@ class PartenaireController extends Controller
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
-        print($request->date_de_naissance);
+       if($request->statu == "false"){
         $Partenaire = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'email_verified_at' => date('Y-m-d H:i:s'),
             'password' =>  Hash::make($request->password),
             'password_exact' => $request->password,
             'address' => $request->address,
@@ -71,9 +72,24 @@ class PartenaireController extends Controller
             'date_de_naissance' => $request->date_de_naissance,
             'carte_identite' => $request->carte_identite,
             'type' => 2,
-            'statu' => $request->statu,
+            'statu' => "desactiver",
 
-        ]);
+        ]);}else{
+            $Partenaire = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'email_verified_at' => date('Y-m-d H:i:s'),
+                'password' =>  Hash::make($request->password),
+                'password_exact' => $request->password,
+                'address' => $request->address,
+                'region' => $request->region,
+                'phone' => $request->phone,
+                'date_de_naissance' => $request->date_de_naissance,
+                'carte_identite' => $request->carte_identite,
+                'type' => 2,
+                'statu' => "activer",
+    
+            ]);}
         return response()->json([
             'message' => 'Partenaire a été ajouté avec succès',
         ]);

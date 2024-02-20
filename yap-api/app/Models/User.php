@@ -21,14 +21,14 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'adresse',
+        'address',
         'region',
         'phone',
-        'Date_de_naissance',
-        'Carte_identite',
+        'date_de_naissance',
+        'carte_identite',
         'email_verified_at',
         'type',
-        'status',
+        'statu',
         'password_exact'
     ];
 

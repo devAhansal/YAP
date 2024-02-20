@@ -103,22 +103,22 @@
                       </div>
 
                       <div class="sm:col-span-3">
-                          <label
-                            for="date_de_naissance"
-                            class="block text-sm font-medium leading-6 text-gray-900"
-                            >Date de naissance</label
-                          >
-                          <div class="mt-2">
-                            <input
-                              v-model="form.date_de_naissance"
-                              id="date_de_naissance"
-                              name="date_de_naissance"
-                              type="date"
-                              autocomplete="date_de_naissance"
-                              class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
-                            />
-                          </div>
+                        <label
+                          for="date_de_naissance"
+                          class="block text-sm font-medium leading-6 text-gray-900"
+                          >Date de naissance</label
+                        >
+                        <div class="mt-2">
+                          <input
+                            v-model="form.date_de_naissance"
+                            id="date_de_naissance"
+                            name="date_de_naissance"
+                            type="date"
+                            autocomplete="date_de_naissance"
+                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+                          />
                         </div>
+                      </div>
                       <div class="sm:col-span-3">
                         <label
                           for="carte_identite"
@@ -209,30 +209,11 @@
                         <div
                           class="card flex flex-wrap justify-content-center gap-3"
                         >
-                          <div class="flex align-items-center">
-                            <input
-                              type="radio"
-                              v-model="form.statu"
-                              id="ingredient1"
-                              name="statu"
-                              value="activer"
-                            />
-                            <label for="ingredient1" class="ml-2">
-                              Activer
-                            </label>
-                          </div>
-                          <div class="flex align-items-center">
-                            <input
-                              type="radio"
-                              v-model="form.statu"
-                              id="ingredient2"
-                              name="statu"
-                              value="desactiver"
-                            />
-                            <label for="ingredient2" class="ml-2">
-                              Désactiver
-                            </label>
-                          </div>
+                          <InputSwitch
+                            v-model="form.statu"
+                            id="statu"
+                            name="statu"
+                          />
                         </div>
                       </div>
                       <div class="sm:col-span-3">
@@ -315,7 +296,7 @@ const form = ref({
   address: "",
   phone: "",
   region: "",
-  statu: "",
+  statu: true,
   email: "",
   password: "",
 });
