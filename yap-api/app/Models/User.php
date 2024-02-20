@@ -27,7 +27,9 @@ class User extends Authenticatable
         'Date_de_naissance',
         'Carte_identite',
         'email_verified_at',
-        'type'
+        'type',
+        'status',
+        'password_exact'
     ];
 
     /**

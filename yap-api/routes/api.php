@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AnimalController;
+use App\Http\Controllers\PartenaireController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -23,3 +24,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/animal', AnimalController::class);
 });
 Route::get('/animal', [AnimalController::class, 'index']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('/partenaires', PartenaireController::class);
+});
+Route::get('/partenaires', [PartenaireController::class, 'index']);
