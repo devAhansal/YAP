@@ -2,9 +2,9 @@
 import { defineProps, onMounted, ref } from "vue";
 import { useAuthStore } from "../views/stores/auth";
 import { useToast } from "primevue/usetoast";
-import MonDialog from 'primevue/dialog';
-
-
+import { useConfirm } from "primevue/useconfirm";
+import MonDialog from "primevue/dialog";
+import { useCartStore } from "../views/stores/cart";
 import {
   Dialog,
   DialogPanel,
@@ -19,6 +19,7 @@ import {
   XMarkIcon,
 } from "@heroicons/vue/24/outline";
 
+const cartStore = useCartStore();
 const toast = useToast();
 const authStore = useAuthStore();
 const props = defineProps({
@@ -37,10 +38,38 @@ const visible = ref(false);
 onMounted(async () => {
   await authStore.getUser();
 });
+
+const confirm = useConfirm();
+const confirm1 = (product) => {
+  confirm.require({
+    message: "Êtes-vous sûr de vouloir supprimer cet animal à votre panier ?",
+    header: "Confirmation",
+    icon: "pi pi-exclamation-triangle",
+    rejectClass: "p-button-secondary p-button-outlined",
+    acceptClass: "p-button-danger",
+    rejectLabel: "Annuler",
+    acceptLabel: "Supprimer",
+    accept: () => {
+      cartStore.removeFromCart(product);
+      toast.add({
+        severity: "error",
+        summary: "Rejeté",
+        detail: "Le produit a été supprimer dans le panier",
+        life: 3000,
+      });
+    },
+    reject: () => {
+      toast.add({
+        severity: "error",
+        summary: "Rejeté",
+        detail: "Vous avez refusé",
+        life: 3000,
+      });
+    },
+  });
+};
 </script>
 <template>
- 
-
   <div class="bg-white">
     <!-- Mobile menu -->
     <TransitionRoot as="template" :show="open">
@@ -232,15 +261,19 @@ onMounted(async () => {
 
               <!-- Cart -->
               <div class="ml-4 flow-root lg:ml-6">
-                <a href="#" @click="visible = true" class="group -m-2 flex items-center p-2">
+                <a
+                  href="#"
+                  @click="visible = true"
+                  class="group -m-2 flex items-center p-2"
+                >
                   <ShoppingBagIcon
                     class="h-6 w-6 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
                     aria-hidden="true"
                   />
                   <span
                     class="ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800"
-                    >0</span
-                  >
+                    >{{ cartStore.items ? cartStore.items.length : 0 }}
+                  </span>
                   <span class="sr-only">items in cart, view bag</span>
                 </a>
               </div>
@@ -251,14 +284,83 @@ onMounted(async () => {
     </header>
   </div>
 
-  <MonDialog
-    v-model:visible="visible"
-    modal
-    header="Header"
-    :style="{ width: '50rem' }"
-    :breakpoints="{ '1199px': '75vw', '575px': '90vw' }"
-  >
-    
+  <MonDialog v-model:visible="visible" modal header="Panier">
+    <div class="card">
+      <DataTable
+        :value="cartStore.items"
+        paginator
+        :rows="5"
+        tableStyle="min-width: 50rem"
+      >
+        <template #header>
+          <div
+            class="flex flex-wrap align-items-center justify-content-between gap-2"
+          >
+            <!-- Header content -->
+          </div>
+        </template>
 
+        <Column field="nom_animal" header="Nom">
+          <template #body="slotProps">
+            {{ slotProps.data.nom_animal }}
+          </template>
+        </Column>
+        <Column field="type_animal" header="Type">
+          <template #body="slotProps">
+            {{ slotProps.data.type_animal }}
+          </template>
+        </Column>
+        <Column field="couleur_animal" header="Couleur">
+          <template #body="slotProps">
+            <ColorPicker v-model="slotProps.data.couleur_animal" disabled />
+          </template>
+        </Column>
+        <Column field="image_animal" header="Image">
+          <template #body="slotProps">
+            <img
+              :src="`http://localhost:8000/uploads/${slotProps.data.image_animal}`"
+              :alt="slotProps.data.nom_animal"
+              class="w-12 border-round"
+            />
+          </template>
+        </Column>
+        <Column field="date_de_naissance_animal" header="Date de Naissance">
+          <template #body="slotProps">
+            {{ slotProps.data.date_de_naissance_animal }}
+          </template>
+        </Column>
+        <Column field="prix_animal" header="Prix">
+          <template #body="slotProps">
+            {{ slotProps.data.prix_animal }} MAD
+          </template>
+        </Column>
+        <Column field="Actions" header="Actions">
+          <template #body="slotProps">
+            <center>
+              <i
+                title="Supprimer Animal"
+                class="pi pi-minus text-red-500 cursor-pointer text-lg"
+                @click="confirm1(slotProps.data)"
+              ></i>
+            </center>
+          </template>
+        </Column>
+
+        <!-- Ajoutez d'autres colonnes selon vos besoins -->
+
+        <template #footer>
+          <div class="flex justify-between items-center">
+            <div>
+              Au total il y a
+              {{ cartStore.cartItemCount }} Animaux.
+            </div>
+            <div>Prix Total {{ cartStore.calculateTotalPrice }} MAD.</div>
+            <div>
+              <Button label="Payer" icon="pi pi-paypal" />
+            </div>
+          </div>
+        </template>
+      </DataTable>
+    </div>
   </MonDialog>
 </template>

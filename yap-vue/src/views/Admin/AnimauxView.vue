@@ -69,7 +69,7 @@
                   <!-- Ajoutez d'autres colonnes selon vos besoins -->
 
                   <template #footer>
-                    In total there are
+                    Au total il y a
                     {{ Animaux ? Animaux.length : 0 }} Animaux.
                   </template>
                 </DataTable>

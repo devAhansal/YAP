@@ -85,6 +85,11 @@
   }
 }
 
-
-
+.p-button{
+    padding: 0.7rem 1rem;
+    font-size: 0.75rem;
+}
+.pi {
+  font-size: 0.7rem;
+}
 

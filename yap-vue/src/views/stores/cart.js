@@ -32,9 +32,17 @@ export const useCartStore = defineStore("cart", {
         };
       }
     },
-    removeFromCart(index) {
-      this.items.splice(index, 1);
-      localStorage.setItem("cartItems", JSON.stringify(this.items)); // Save cart to localStorage
+    removeFromCart(product) {
+      // Trouver l'index de l'élément avec l'ID du produit
+      console.log(this.items);
+      console.log(product);
+      const index = this.items.findIndex((item) => item.id === product.id);
+      // Vérifier si l'élément a été trouvé dans le tableau
+      if (index !== -1) {
+        // Supprimer l'élément du tableau
+        this.items.splice(index, 1);
+        localStorage.setItem("cartItems", JSON.stringify(this.items)); // Save cart to localStorage
+      }
     },
     clearCart() {
       this.items = [];
@@ -42,8 +50,18 @@ export const useCartStore = defineStore("cart", {
     },
   },
   getters: {
-    cartTotal() {
-      return this.items.reduce((total, product) => total + product.price, 0);
+    calculateTotalPrice() {
+      let totalPrice = 0;
+      // Vérifie si le panier contient des articles
+      if (this.items && this.items.length > 0) {
+        // Boucle à travers les articles du panier
+        this.items.forEach((item) => {
+          // Ajoute le prix de l'article au prix total
+          totalPrice += item.prix_animal;
+        });
+      }
+      // Retourne le prix total
+      return totalPrice;
     },
     cartItemCount() {
       return this.items.length;
