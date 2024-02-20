@@ -135,7 +135,7 @@ const confirm1 = (product) => {
                       class="flex sm:flex-col items-center sm:items-end gap-3 sm:gap-2"
                     >
                       <span class="text-2xl font-semibold"
-                        >${{ item.prix_animal }}</span
+                        >{{ item.prix_animal }} MAD</span
                       >
                       <Button
                         @click="confirm1(item)"
