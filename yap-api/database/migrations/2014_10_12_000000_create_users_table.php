@@ -25,6 +25,8 @@ return new class extends Migration
             $table->date("date_de_naissance")->nullable();
             $table->string("carte_identite")->nullable();
             $table->boolean('type')->default(true);
+            $table->boolean('statu')->default('activer');
+            $table->boolean('password')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
