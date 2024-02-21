@@ -69,7 +69,7 @@ const mobileMenuOpen = ref(false);
               <span class="sr-only">Your Company</span>
               <img
                 class="h-8 w-auto"
-                src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+                src="/public/images/logo.ico"
                 alt=""
               />
             </a>

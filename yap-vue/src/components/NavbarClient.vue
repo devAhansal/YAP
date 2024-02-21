@@ -5,6 +5,8 @@ import { useToast } from "primevue/usetoast";
 import { useConfirm } from "primevue/useconfirm";
 import MonDialog from "primevue/dialog";
 import { useCartStore } from "../views/stores/cart";
+import { useRoute } from "vue-router";
+
 import {
   Dialog,
   DialogPanel,
@@ -35,10 +37,7 @@ const navigation = {
   ],
 };
 const visible = ref(false);
-onMounted(async () => {
-  await authStore.getUser();
-});
-
+const route = useRoute();
 const confirm = useConfirm();
 const confirm1 = (product) => {
   confirm.require({
@@ -68,6 +67,29 @@ const confirm1 = (product) => {
     },
   });
 };
+
+onMounted(async () => {
+  await authStore.getUser();
+  if (route.query && route.query.success == 1) {
+    // Afficher les paramètres dans la console
+    console.log("Paramètres de la route :", route.query);
+    toast.add({
+      severity: "info",
+      summary: "Confirmé",
+      detail: "Le paiement a été effectué",
+      life: 3000,
+    });
+    cartStore.successPaypalPayment(route.query);
+  }
+  if (route.query.success == 0) {
+    toast.add({
+      severity: "error",
+      summary: "Rejeté",
+      detail: "Le paiement a été annulé",
+      life: 3000,
+    });
+  }
+});
 </script>
 <template>
   <div class="bg-white">
@@ -147,9 +169,17 @@ const confirm1 = (product) => {
                 </div>
                 <div class="flow-root">
                   <router-link
+                    v-if="!authStore.user"
                     :to="{ name: 'register' }"
                     class="-m-2 block p-2 font-medium text-gray-900"
                     >Inscrivez-vous
+                  </router-link>
+                  <router-link
+                    v-else
+                    :to="{ name: '' }"
+                    @click="authStore.handleLogout()"
+                    class="-m-2 block p-2 font-medium text-gray-900"
+                    >Se déconnecter
                   </router-link>
                 </div>
               </div>
@@ -284,8 +314,25 @@ const confirm1 = (product) => {
     </header>
   </div>
 
-  <MonDialog v-model:visible="visible" modal header="Panier">
+  <MonDialog
+    v-model:visible="visible"
+    modal
+    header="Panier"
+    :style="{ width: '70vw' }"
+    :breakpoints="{ '1199px': '75vw', '575px': '90vw' }"
+  >
     <div class="card">
+      <div class="flex justify-end mt-2">
+        <Button
+          label="Payer"
+          :disabled="!authStore.user || cartStore.cartItemCount == 0"
+          icon="pi pi-paypal"
+          @click="
+            cartStore.initiatePaypalPayment(cartStore.calculateTotalPrice)
+          "
+        />
+      </div>
+      <br />
       <DataTable
         :value="cartStore.items"
         paginator
@@ -355,9 +402,6 @@ const confirm1 = (product) => {
               {{ cartStore.cartItemCount }} Animaux.
             </div>
             <div>Prix Total {{ cartStore.calculateTotalPrice }} MAD.</div>
-            <div>
-              <Button label="Payer" icon="pi pi-paypal" />
-            </div>
           </div>
         </template>
       </DataTable>

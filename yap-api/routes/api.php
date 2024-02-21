@@ -3,7 +3,7 @@
 use App\Http\Controllers\AnimalController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\PayPalController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -21,5 +21,16 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/animal', AnimalController::class);
+    Route::post('/create-payment',[PayPalController::class, 'createPayment'])->name('createPayment');
+    Route::post('/success-payment',[PayPalController::class, 'success'])->name('createPayment');
+
 });
 Route::get('/animal', [AnimalController::class, 'index']);
+// Route::group(['prefix' => 'payement'], function () {
+//     Route::get('/', [PayPalController::class, 'payement'])->name('payment.payment');
+//     Route::get('/cancel', [PayPalController::class, 'cancel'])->name('payment.cancel');
+//     Route::get('/success', [PayPalController::class, 'success'])->name('payment.success');
+// });
+
+
+

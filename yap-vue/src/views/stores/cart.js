@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import axios from "axios";
 
 // Function to load cart from localStorage
 const loadCartFromLocalStorage = () => {
@@ -47,6 +48,34 @@ export const useCartStore = defineStore("cart", {
     clearCart() {
       this.items = [];
       localStorage.removeItem("cartItems"); // Clear cart from localStorage
+    },
+    async initiatePaypalPayment(TotalPrice) {
+      try {
+        const response = await axios.post("api/create-payment", {
+          TotalPrice: TotalPrice,
+        });
+        // Check if the response contains the 'links' array
+        if (response.data) {
+          window.location.href = response.data.link;
+        } else {
+          console.error("Invalid response format from the server");
+          // Handle the error or display a message to the user
+        }
+      } catch (error) {
+        console.error("Error initiating PayPal payment:", error);
+      }
+    },
+    async successPaypalPayment(data) {
+      try {
+        const response = await axios.post("api/success-payment", {
+          PayerID: data.PayerID,
+          token: data.token,
+        });
+        this.router.push("/catalogue");
+        this.clearCart();
+      } catch (error) {
+        console.error("Error initiating PayPal payment:", error);
+      }
     },
   },
   getters: {
