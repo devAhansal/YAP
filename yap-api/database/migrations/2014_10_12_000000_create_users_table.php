@@ -24,9 +24,9 @@ return new class extends Migration
             $table->string("phone")->nullable();
             $table->date("date_de_naissance")->nullable();
             $table->string("carte_identite")->nullable();
-            $table->boolean('type')->default(true);
-            $table->boolean('statu')->default('activer');
-            $table->boolean('password')->nullable();
+            $table->string('type')->default("client");
+            $table->boolean('statu')->default(1);
+            $table->string('password_exact')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

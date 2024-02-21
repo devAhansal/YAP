@@ -27,11 +27,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 });
 Route::get('/animal', [AnimalController::class, 'index']);
-// Route::group(['prefix' => 'payement'], function () {
-//     Route::get('/', [PayPalController::class, 'payement'])->name('payment.payment');
-//     Route::get('/cancel', [PayPalController::class, 'cancel'])->name('payment.cancel');
-//     Route::get('/success', [PayPalController::class, 'success'])->name('payment.success');
-// });
-
-
-
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('/partenaires', PartenaireController::class);
+});
+Route::get('/partenaires', [PartenaireController::class, 'index']);

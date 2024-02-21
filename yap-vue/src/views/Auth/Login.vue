@@ -1,16 +1,33 @@
 <script setup>
-import { ref } from "vue";
 import { useAuthStore } from "../stores/auth";
+import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { useToast } from "primevue/usetoast";
 
+const toast = useToast();
 const authStore = useAuthStore();
 
+const router = useRouter(); // Initialisez le router
 const form = ref({
   email: "",
   password: "",
 });
+
+onMounted(async () => {
+  await authStore.getUser();
+  if (authStore.user && authStore.user !== null) {
+    if (authStore.user.type === "admin") {
+      router.push("/dashboard");
+    } else {
+      router.push("/catalogue");
+    }
+  }
+});
+
 </script>
 
 <template>
+  
   <div
     class="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8"
   >

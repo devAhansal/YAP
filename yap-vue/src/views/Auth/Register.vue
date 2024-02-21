@@ -113,10 +113,14 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { useAuthStore } from "../stores/auth";
+import { ref, onMounted } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
+import { useToast } from "primevue/usetoast";
+
 const router = useRouter();
+const toast = useToast();
 const form = ref({
   name: "",
   email: "",
@@ -124,13 +128,69 @@ const form = ref({
   confirmPassword: "",
 });
 
+// const handleRegister = async () => {
+//   await axios.get("/sanctum/csrf-cookie");
+//   await axios.post("api/register", {
+//     name: form.value.name,
+//     email: form.value.email,
+//     password: form.value.password,
+//     confirmPassword: form.value.confirmPassword,
+//   });
+//   router.push("/dashboard");
+// };
+
 const handleRegister = async () => {
-  await axios.post("api/register", {
-    name: form.value.name,
-    email: form.value.email,
-    password: form.value.password,
-    confirmPassword: form.value.confirmPassword,
-  });
-  router.push("/dashboard");
+  try {
+    await axios.get("/sanctum/csrf-cookie");
+    const response = await axios.post("api/register", {
+      name: form.value.name,
+      email: form.value.email,
+      password: form.value.password,
+      password_confirmation: form.value.confirmPassword,
+    });
+
+    // Affichage du toast de succès
+    toast.add({
+      severity: "success",
+      summary: "Succès",
+      detail: "L'inscription a été effectuée avec succès.",
+      life: 3000,
+    });
+
+    // Redirection vers le tableau de bord
+    router.push("/catalogue");
+  } catch (error) {
+    if (
+      error.response.data.message.includes("The email has already been taken")
+    ) {
+      // Ajoutez un toast pour indiquer que l'e-mail est déjà pris
+      toast.add({
+        severity: "error",
+        summary: "Erreur",
+        detail: "Cet e-mail est déjà associé à un compte.",
+        life: 3000,
+      });
+    } else {
+      // Affichage du toast d'erreur
+      toast.add({
+        severity: "error",
+        summary: "Erreur",
+        detail: "Erreur de mot de passe",
+        life: 3000,
+      });
+    }
+  }
 };
+
+const authStore = useAuthStore();
+onMounted(async () => {
+  await authStore.getUser();
+  if (authStore.user && authStore.user !== null) {
+    if (authStore.user.type === "admin") {
+      router.push("/dashboard");
+    } else {
+      router.push("/catalogue");
+    }
+  }
+});
 </script>

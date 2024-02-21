@@ -93,3 +93,14 @@
   font-size: 0.7rem;
 }
 
+.p-toast .p-toast-message {
+  font-size: 0.8rem; /* Définissez la taille de la police */
+  line-height: 1.2rem; /* Définissez la hauteur de ligne */
+}
+
+/* Définissez la taille de l'icône du toast */
+.p-toast .p-toast-icon {
+  font-size: 1rem; /* Définissez la taille de l'icône */
+  width: 1.5rem; /* Définissez la largeur de l'icône */
+  height: 1.5rem; /* Définissez la hauteur de l'icône */
+}

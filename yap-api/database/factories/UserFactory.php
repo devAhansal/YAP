@@ -25,6 +25,7 @@ class UserFactory extends Factory
             'remember_token' => Str::random(10),
             'address' => $this->faker->sentence(),
             'region' => $this->faker->sentence(),
+            'type' =>"admin",
             'phone' => $this->faker->e164PhoneNumber(),
             'date_de_naissance' => $this->faker->date('Y_m_d'),
             'carte_identite' => $this->faker->regexify('[A-Z]{5}[0-4]{3}')

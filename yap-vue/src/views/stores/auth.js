@@ -30,7 +30,12 @@ export const useAuthStore = defineStore("auth", {
           email: data.email,
           password: data.password,
         });
-        this.router.push("/dashboard");
+        await this.getUser();
+        if (this.authUser?.type === "admin") {
+          this.router.push("/dashboard");
+        } else {
+          this.router.push("/catalogue");
+        }
       } catch (error) {
         if (error.response.status === 422) {
           this.authErrors = error.response.data.errors;
