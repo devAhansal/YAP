@@ -1,18 +1,19 @@
 import { defineStore } from "pinia";
 import axios from "axios";
-
+import { useAuthStore } from "./auth";
 // Function to load cart from localStorage
 const loadCartFromLocalStorage = () => {
   const cartItems = localStorage.getItem("cartItems");
   return cartItems ? JSON.parse(cartItems) : [];
 };
+const authStore = useAuthStore();
 
 export const useCartStore = defineStore("cart", {
   state: () => ({
     items: loadCartFromLocalStorage(), // Load cart from localStorage
   }),
   actions: {
-    addToCart(product) {
+    async addToCart(product) {
       // Check if the product already exists in the cart
       const existingProductIndex = this.items.findIndex(
         (item) => item.id === product.id
@@ -27,12 +28,29 @@ export const useCartStore = defineStore("cart", {
         // If the product doesn't exist, add it to the cart
         this.items.push(product);
         localStorage.setItem("cartItems", JSON.stringify(this.items));
+        try {
+          await authStore.getUser();
+          if (authStore.user && authStore.user !== null) {
+            const status = await checkCommandesStatus();
+            if (status === "paye") {
+              // add new commande for cart
+              const id_commande = await AddCommmande();
+              await AddAnimalToCommande(id_commande);
+            } else {
+              //use last commande for cart
+              AddAnimalToCommande(0);
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching user:", error);
+        }
         return {
           code: 200,
-          message: "Le produit a été ajouter dans le panier",
+          message: "Le produit a été ajouté dans le panier",
         };
       }
     },
+
     removeFromCart(product) {
       // Trouver l'index de l'élément avec l'ID du produit
       console.log(this.items);
@@ -75,6 +93,35 @@ export const useCartStore = defineStore("cart", {
         this.clearCart();
       } catch (error) {
         console.error("Error initiating PayPal payment:", error);
+      }
+    },
+    // checkCommandesStatus Paye ou non paye
+    async checkCommandesStatus() {
+      try {
+        const response = await axios.get("/api/check-commandes-status");
+        console.log("Commandes Status:", response.data);
+      } catch (error) {
+        console.error("Error checking commandes status:", error);
+      }
+    },
+    async AddCommmande() {
+      try {
+        const response = await axios.post("/api/commandes");
+        console.log("Commande added successfully:", response.data);
+        toast.success("Commande added successfully");
+      } catch (error) {
+        console.error("Error adding commande:", error);
+        toast.error("Error adding commande");
+      }
+    },
+    async AddAnimalToCommande() {
+      try {
+        const response = await axios.post("/api/paniers");
+        console.log("Animal added to commande:", response.data);
+        toast.success("Animal added to commande successfully");
+      } catch (error) {
+        console.error("Error adding animal to commande:", error);
+        toast.error("Error adding animal to commande");
       }
     },
   },

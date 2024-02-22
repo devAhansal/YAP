@@ -16,8 +16,10 @@ class Animal extends Model
         'date_de_naissance_animal',
         'prix_animal',
     ];
-    public function Catalogues_animals()
+
+    public function paniers()
     {
-        return $this->belongsTo(Catalogues_animals::class, 'animal_id', 'id');
+        return $this->hasMany(Panier::class,'commande_id','id');
     }
+  
 }

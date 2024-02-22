@@ -1,10 +1,12 @@
 <?php
 
-use App\Http\Controllers\AnimalController;
-use App\Http\Controllers\PartenaireController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AnimalController;
+use App\Http\Controllers\PanierController;
 use App\Http\Controllers\PayPalController;
+use App\Http\Controllers\CommandeController;
+use App\Http\Controllers\PartenaireController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -22,12 +24,14 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/animal', AnimalController::class);
+    Route::apiResource('/partenaires', PartenaireController::class);
+    Route::apiResource('/commandes', CommandeController::class);
+    Route::apiResource('/paniers', PanierController::class);
+
+
+    Route::post('/check-commandes-status',[PayPalController::class, 'checkcommandesstatus'])->name('checkcommandesstatus');
     Route::post('/create-payment',[PayPalController::class, 'createPayment'])->name('createPayment');
     Route::post('/success-payment',[PayPalController::class, 'success'])->name('createPayment');
-
 });
 Route::get('/animal', [AnimalController::class, 'index']);
-Route::middleware('auth:sanctum')->group(function () {
-    Route::apiResource('/partenaires', PartenaireController::class);
-});
-Route::get('/partenaires', [PartenaireController::class, 'index']);
+

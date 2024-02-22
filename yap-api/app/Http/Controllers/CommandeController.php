@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use DateTime;
 use App\Models\Commande;
 use Illuminate\Http\Request;
+use Illuminate\Console\Command;
 
 class CommandeController extends Controller
 {
@@ -25,9 +27,22 @@ class CommandeController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $commande = Commande::create([
+            'NumCommande' =>  $this->generateNumberCommande('Commande'),
+            'status' => "non-paye",
+            'user_id ' => Auth()->user()->id,
+        ]);
+        
     }
-
+    public function generateNumberCommande($char)
+    {
+        $currentDateTimeString = date('M d, H:i:s');
+        $dateTime = new DateTime($currentDateTimeString);
+        $timestamp = $dateTime->getTimestamp();
+        $year = date('Y');
+        $NumberCommande = $char . $year . $timestamp;
+        return $NumberCommande;
+    }
     /**
      * Display the specified resource.
      *

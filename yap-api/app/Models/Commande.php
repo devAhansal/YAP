@@ -13,4 +13,9 @@ class Commande extends Model
         'status',
         'user_id'
     ];
+    public function paniers()
+    {
+        return $this->hasMany(Panier::class,'car_id','id');
+    }
+    
 }
