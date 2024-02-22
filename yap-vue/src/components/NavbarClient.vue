@@ -48,8 +48,22 @@ const confirm1 = (product) => {
     acceptClass: "p-button-danger",
     rejectLabel: "Annuler",
     acceptLabel: "Supprimer",
-    accept: () => {
+    accept: async () => {
       cartStore.removeFromCart(product);
+      if (authStore.user && authStore.user !== null) {
+        const commande = await cartStore.checkCommandesStatus();
+        if (commande.countNonPaye == 0) {
+          // add new commande for cart
+          const id_commande = await cartStore.AddCommmande();
+          await cartStore.DeleteAnimalOfCommande(id_commande, product.id);
+        } else {
+          //use last commande for cart
+          cartStore.DeleteAnimalOfCommande(
+            commande.lastNonPayeCommandeID,
+            product.id
+          );
+        }
+      }
       toast.add({
         severity: "error",
         summary: "Rejeté",
@@ -79,7 +93,8 @@ onMounted(async () => {
       detail: "Le paiement a été effectué",
       life: 3000,
     });
-    cartStore.successPaypalPayment(route.query);
+    await cartStore.successPaypalPayment(route.query);
+    await cartStore.lastNonPayeCommande();
   }
   if (route.query.success == 0) {
     toast.add({

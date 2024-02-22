@@ -27,8 +27,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/partenaires', PartenaireController::class);
     Route::apiResource('/commandes', CommandeController::class);
     Route::apiResource('/paniers', PanierController::class);
-
-    Route::post('/updateAllToPaye', [CommandeController::class, 'updateAllToPaye'])->name('updateAllToPaye');
+    Route::delete('/paniers/{commandeId}/{animalId}', [PanierController::class, 'destroy']);
+    Route::post('/updateToPaye', [CommandeController::class, 'updateToPaye'])->name('updateToPaye');
     Route::get('/check-commandes-status',[CommandeController::class, 'checkcommandesstatus'])->name('checkcommandesstatus');
     Route::post('/create-payment',[PayPalController::class, 'createPayment'])->name('createPayment');
     Route::post('/success-payment',[PayPalController::class, 'success'])->name('createPayment');

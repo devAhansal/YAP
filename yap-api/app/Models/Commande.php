@@ -11,7 +11,8 @@ class Commande extends Model
     protected $fillable = [
         'NumCommande',
         'status',
-        'user_id'
+        'user_id',
+        'livrée'
     ];
     public function paniers()
     {

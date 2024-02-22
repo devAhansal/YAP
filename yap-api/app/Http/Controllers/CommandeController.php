@@ -91,26 +91,33 @@ class CommandeController extends Controller
         //
     }
 
-    public function updateAllToPaye()
+    public function updateToPaye()
     {
         try {
-            // Retrieve all commandes
-            $commandes = Commande::all();
-
-            // Loop through each commande and update its status to "paye"
-            foreach ($commandes as $commande) {
-                $commande->status = 'paye';
-                $commande->save();
-            }
+            // Retrieve the last non-paye commande for the authenticated user
+            $lastNonPayeCommande = Commande::where("user_id", "=", Auth()->user()->id)
+                ->where("status", "=", "non-paye")
+                ->latest()
+                ->first(); // Retrieve the actual model instance
+            
+            if ($lastNonPayeCommande) {
+                // Update the status to paye
+                $lastNonPayeCommande->status = 'paye';
+                $lastNonPayeCommande->save();
     
-            // Return a success response
-            return response()->json(['message' => 'All commandes updated to status paye'], 200);
+                // Return a success response
+                return response()->json(['message' => 'Commande mise à jour au statut payant'], 200);
+            } else {
+                // Return an error response if no non-paye commande is found
+                return response()->json(['error' => 'Aucune commande non payée trouvée'], 404);
+            }
         } catch (\Exception $e) {
             // Return an error response if an exception occurs
-            return response()->json(['error' => "Failed to update commandes status"], 500);
+            return response()->json(['error' => "Échec de la mise à jour de l'état de la commande"], 500);
         }
     }
     
+
 
     /**
      * Remove the specified resource from storage.

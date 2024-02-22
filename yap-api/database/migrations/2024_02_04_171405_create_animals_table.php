@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string("type_animal");
             $table->string("couleur_animal");
             $table->longText("image_animal");
+            $table->string("status")->default("non-paye");
             $table->date("date_de_naissance_animal");
             $table->double("prix_animal");
             $table->timestamps();

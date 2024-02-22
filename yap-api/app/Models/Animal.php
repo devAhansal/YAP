@@ -15,6 +15,7 @@ class Animal extends Model
         'image_animal',
         'date_de_naissance_animal',
         'prix_animal',
+        'status'
     ];
 
     public function paniers()

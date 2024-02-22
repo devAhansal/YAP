@@ -113,6 +113,25 @@ export const useCartStore = defineStore("cart", {
         toast.error("Error adding animal to commande");
       }
     },
+    async DeleteAnimalOfCommande(commandeId, AnimalId) {
+      try {
+        const response = await axios.delete(
+          "/api/paniers/" + commandeId + "/" + AnimalId
+        );
+        return ("Animal deleted  successfully");
+      } catch (error) {
+        return ("Error deleting animal");
+      }
+    },
+    async lastNonPayeCommande() {
+      try {
+        const response = await axios.post("/api/updateToPaye");
+        return response.data;
+        console.log(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    },
   },
   getters: {
     calculateTotalPrice() {
