@@ -28,8 +28,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/commandes', CommandeController::class);
     Route::apiResource('/paniers', PanierController::class);
 
-
-    Route::post('/check-commandes-status',[PayPalController::class, 'checkcommandesstatus'])->name('checkcommandesstatus');
+    Route::post('/updateAllToPaye', [CommandeController::class, 'updateAllToPaye'])->name('updateAllToPaye');
+    Route::get('/check-commandes-status',[CommandeController::class, 'checkcommandesstatus'])->name('checkcommandesstatus');
     Route::post('/create-payment',[PayPalController::class, 'createPayment'])->name('createPayment');
     Route::post('/success-payment',[PayPalController::class, 'success'])->name('createPayment');
 });

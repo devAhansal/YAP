@@ -13,7 +13,7 @@ export const useCartStore = defineStore("cart", {
     items: loadCartFromLocalStorage(), // Load cart from localStorage
   }),
   actions: {
-    async addToCart(product) {
+    addToCart(product) {
       // Check if the product already exists in the cart
       const existingProductIndex = this.items.findIndex(
         (item) => item.id === product.id
@@ -28,22 +28,6 @@ export const useCartStore = defineStore("cart", {
         // If the product doesn't exist, add it to the cart
         this.items.push(product);
         localStorage.setItem("cartItems", JSON.stringify(this.items));
-        try {
-          await authStore.getUser();
-          if (authStore.user && authStore.user !== null) {
-            const status = await checkCommandesStatus();
-            if (status === "paye") {
-              // add new commande for cart
-              const id_commande = await AddCommmande();
-              await AddAnimalToCommande(id_commande);
-            } else {
-              //use last commande for cart
-              AddAnimalToCommande(0);
-            }
-          }
-        } catch (error) {
-          console.error("Error fetching user:", error);
-        }
         return {
           code: 200,
           message: "Le produit a été ajouté dans le panier",
@@ -99,6 +83,7 @@ export const useCartStore = defineStore("cart", {
     async checkCommandesStatus() {
       try {
         const response = await axios.get("/api/check-commandes-status");
+        return response.data;
         console.log("Commandes Status:", response.data);
       } catch (error) {
         console.error("Error checking commandes status:", error);
@@ -107,6 +92,7 @@ export const useCartStore = defineStore("cart", {
     async AddCommmande() {
       try {
         const response = await axios.post("/api/commandes");
+        return response.data;
         console.log("Commande added successfully:", response.data);
         toast.success("Commande added successfully");
       } catch (error) {
@@ -114,9 +100,12 @@ export const useCartStore = defineStore("cart", {
         toast.error("Error adding commande");
       }
     },
-    async AddAnimalToCommande() {
+    async AddAnimalToCommande(commandeId, AnimalId) {
       try {
-        const response = await axios.post("/api/paniers");
+        const response = await axios.post("/api/paniers", {
+          commande_id: commandeId,
+          animal_id: AnimalId,
+        });
         console.log("Animal added to commande:", response.data);
         toast.success("Animal added to commande successfully");
       } catch (error) {

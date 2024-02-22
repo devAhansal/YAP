@@ -6,8 +6,10 @@ import DataViewLayoutOptions from "primevue/dataviewlayoutoptions"; // optional
 import ConfirmDialog from "primevue/confirmdialog";
 import axios from "axios";
 import { useCartStore } from "./stores/cart";
+import { useAuthStore } from "./stores/auth";
 
 const cartStore = useCartStore();
+const authStore = useAuthStore();
 
 onMounted(() => {
   ProductService.getProducts().then((data) => (products.value = data));
@@ -37,7 +39,7 @@ import { useToast } from "primevue/usetoast";
 const confirm = useConfirm();
 const toast = useToast();
 
-const confirm1 = (product) => {
+const confirm1 =  (product)  =>  {
   confirm.require({
     message: "Êtes-vous sûr de vouloir ajouter cet animal à votre panier ?",
     header: "Confirmation",
@@ -45,7 +47,7 @@ const confirm1 = (product) => {
     rejectClass: "p-button-secondary p-button-outlined",
     rejectLabel: "Annuler",
     acceptLabel: "Ajouter",
-    accept: () => {
+    accept: async () => {
       const storeproduit = cartStore.addToCart(product);
       if ((storeproduit.code == 400)) {
         toast.add({
@@ -55,6 +57,25 @@ const confirm1 = (product) => {
           life: 3000,
         });
       } else {
+        try {
+          await authStore.getUser();
+          if (authStore.user && authStore.user !== null) {
+            const commande = await cartStore.checkCommandesStatus();
+            if (commande.countNonPaye == 0) {
+              // add new commande for cart
+              const id_commande = await cartStore.AddCommmande();
+              await cartStore.AddAnimalToCommande(id_commande,product.id);
+            } else {
+              //use last commande for cart
+              cartStore.AddAnimalToCommande(commande.lastNonPayeCommandeID,product.id);
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching user:", error);
+        }
+
+
+
         toast.add({
           severity: "info",
           summary: "Confirmé",
