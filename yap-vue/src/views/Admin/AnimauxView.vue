@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-full">
     <navbar-admin routeCurrentName="dashboardAnimaux" />
-   
+    <ConfirmDialog></ConfirmDialog>
 
     <header class="bg-white shadow">
       <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
@@ -40,7 +40,10 @@
                   </Column>
                   <Column field="couleur_animal" header="Couleur">
                     <template #body="slotProps">
-                      <ColorPicker  v-model="slotProps.data.couleur_animal"  disabled />
+                      <ColorPicker
+                        v-model="slotProps.data.couleur_animal"
+                        disabled
+                      />
                     </template>
                   </Column>
                   <Column field="image_animal" header="Image">
@@ -63,6 +66,24 @@
                   <Column field="prix_animal" header="Prix">
                     <template #body="slotProps">
                       {{ slotProps.data.prix_animal }} MAD
+                    </template>
+                  </Column>
+                  <Column field="status_animal" header="Status">
+                    <template #body="slotProps">
+                      {{ slotProps.data.status }}
+                    </template>
+                  </Column>
+                  <Column field="Actions" header="Actions">
+                    <template #body="slotProps">
+                      <center>
+                        <i
+                          title="Supprimer Animal"
+                          style="font-size: 20px"
+                          
+                          class="pi pi-trash text-red-500 cursor-pointer text-lg"
+                          @click="confirmDelete(slotProps.data)"
+                        ></i>
+                      </center>
                     </template>
                   </Column>
 
@@ -274,11 +295,25 @@ import { ProductService } from "@/service/ProductService";
 import axios from "axios";
 import { useRouter } from "vue-router";
 import { useToast } from "primevue/usetoast";
-const toast = useToast();
+import { useAuthStore } from "../stores/auth";
+import { useConfirm } from "primevue/useconfirm";
 
+import ConfirmDialog from "primevue/confirmdialog";
+
+const confirm = useConfirm();
+const toast = useToast();
+const authStore = useAuthStore();
 const router = useRouter();
 
-onMounted(() => {
+onMounted(async () => {
+  await authStore.getUser();
+  if (authStore.user && authStore.user !== null) {
+    if (authStore.user.type === "admin") {
+      router.push("/dashboard/animaux");
+    } else {
+      router.push("/catalogue");
+    }
+  }
   ProductService.getProducts().then((data) => (products.value = data));
   getAnimals();
 });
@@ -377,5 +412,37 @@ const getSeverity = (product) => {
     default:
       return null;
   }
+};
+const confirmDelete = (product) => {
+  confirm.require({
+    message: "Êtes-vous sûr de vouloir supprimer cet animal ?",
+    header: "Confirmation",
+    icon: "pi pi-exclamation-triangle",
+    rejectClass: "p-button-secondary p-button-outlined",
+    acceptClass: "p-button-danger",
+    rejectLabel: "Annuler",
+    acceptLabel: "Supprimer",
+    accept: async () => {
+      const response = await axios.delete(
+        "/api/animal/" + product.id 
+      );
+      await getAnimals();
+      return "Animal deleted  successfully";
+      toast.add({
+        severity: "error",
+        summary: "Rejeté",
+        detail: "Animal a été supprimer ",
+        life: 3000,
+      });
+    },
+    reject: () => {
+      toast.add({
+        severity: "error",
+        summary: "Rejeté",
+        detail: "Vous avez refusé",
+        life: 3000,
+      });
+    },
+  });
 };
 </script>

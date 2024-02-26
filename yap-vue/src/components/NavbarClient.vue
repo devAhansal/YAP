@@ -93,8 +93,27 @@ onMounted(async () => {
       detail: "Le paiement a été effectué",
       life: 3000,
     });
+    // Get the cart items from localStorage
+    const cartItems = localStorage.getItem("cartItems");
+
+    // Parse the cartItems string into a JavaScript object
+    const content = JSON.parse(cartItems);
+
+    // Check if content is not empty and it's an array
+    if (Array.isArray(content) && content.length > 0) {
+      // Iterate over each item in the content array
+      content.forEach(async (item) => {
+        // Log the id of the current item to the console
+        console.log("Item id:", item.id);
+        await cartStore.updateAnimalStatusToPaye(item.id);
+        // You can perform other operations with the item here
+      });
+    } else {
+      console.log("Cart is empty or invalid.");
+    }
     await cartStore.successPaypalPayment(route.query);
     await cartStore.lastNonPayeCommande();
+    window.location.reload();
   }
   if (route.query.success == 0) {
     toast.add({
@@ -262,16 +281,25 @@ onMounted(async () => {
                 class="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6"
               >
                 <router-link
-                  :to="{ name: '' }"
-                  v-if="authStore.user"
+                  v-if="authStore.user && authStore.user.type === 'admin'"
+                  :to="{ name: 'dashboardAnimaux' }"
                   class="text-sm font-medium text-gray-700 hover:text-gray-800"
-                  >{{ authStore.user.name }}
+                >
+                  {{ authStore.user.name }}
                 </router-link>
                 <router-link
-                  :to="{ name: 'login' }"
-                  v-else
+                  v-else-if="authStore.user && authStore.user.type !== 'admin'"
+                  :to="{ name: '' }"
                   class="text-sm font-medium text-gray-700 hover:text-gray-800"
-                  >Se connecter
+                >
+                  {{ authStore.user.name }}
+                </router-link>
+                <router-link
+                  v-else
+                  :to="{ name: 'login' }"
+                  class="text-sm font-medium text-gray-700 hover:text-gray-800"
+                >
+                  Se connecter
                 </router-link>
                 <span class="h-6 w-px bg-gray-200" aria-hidden="true" />
                 <router-link

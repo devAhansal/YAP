@@ -17,7 +17,8 @@ class CommandeController extends Controller
      */
     public function index()
     {
-        //
+        $Commandes = Commande::get();
+        return Response()->json($Commandes);
     }
 
     /**

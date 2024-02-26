@@ -17,7 +17,7 @@ onMounted(async () => {
   await authStore.getUser();
   if (authStore.user && authStore.user !== null) {
     if (authStore.user.type === "admin") {
-      router.push("/dashboard");
+      router.push("/dashboard/animaux");
     } else {
       router.push("/catalogue");
     }

@@ -32,7 +32,7 @@ export const useAuthStore = defineStore("auth", {
         });
         await this.getUser();
         if (this.authUser?.type === "admin") {
-          this.router.push("/dashboard");
+          this.router.push("/dashboard/animaux");
         } else {
           this.router.push("/catalogue");
         }
@@ -52,7 +52,7 @@ export const useAuthStore = defineStore("auth", {
           password: data.password,
           password_confirmation: data.password_confirmation,
         });
-        this.router.push("/dashboard");
+        this.router.push("/dashboard/animaux");
       } catch (error) {
         if (error.response.status === 422) {
           this.authErrors = error.response.data.errors;

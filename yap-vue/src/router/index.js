@@ -49,11 +49,11 @@ const router = createRouter({
       name: "ResetPassword",
       component: () => import("../views/Auth/ResetPassword.vue"),
     },
-    {
-      path: "/dashboard",
-      name: "dashboard",
-      component: () => import("../views/Admin/DashboardView.vue"),
-    },
+    // {
+    //   path: "/dashboard",
+    //   name: "dashboard",
+    //   component: () => import("../views/Admin/DashboardView.vue"),
+    // },
     {
       path: "/dashboard/animaux",
       name: "dashboardAnimaux",
@@ -68,6 +68,11 @@ const router = createRouter({
       path: "/dashboard/commandes",
       name: "dashboardCommandes",
       component: () => import("../views/Admin/CommandesView.vue"),
+    },
+    {
+      path: "/dashboard/commandes/details:idCommande",
+      name: "dashboardCommandesDetails",
+      component: () => import("../views/Admin/CommandesDetailsView.vue"),
     },
   ],
 });

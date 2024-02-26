@@ -1,32 +1,23 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { ProductService } from "@/service/ProductService";
 import axios from "axios";
 import { useRouter } from "vue-router";
 import { useToast } from "primevue/usetoast";
+import { useAuthStore } from "../stores/auth";
 const toast = useToast();
-
+const authStore = useAuthStore();
 const router = useRouter();
 
 onMounted(() => {
-  ProductService.getProducts().then((data) => (products.value = data));
-  getAnimals();
-});
-const form = ref({
-  nom_animal: "",
-  prix_animal: "",
-  date_de_naissance_animal: "",
-  type_animal: "",
-  couleur_animal: "",
-  image_animal: null, // Définissez image_animal sur null
+  getCommandes();
 });
 
-const Animaux = ref();
+const Commandes = ref();
 
-const getAnimals = async () => {
+const getCommandes = async () => {
   try {
-    const response = await axios.get("api/animal");
-    Animaux.value = response.data;
+    const response = await axios.get("api/commandes");
+    Commandes.value = response.data;
   } catch (error) {
     console.error(
       "Erreur lors de la récupération des détails de l'animal:",
@@ -35,28 +26,17 @@ const getAnimals = async () => {
   }
 };
 
-const onselectedFile = (event) => {
-  form.image_animal = event.target.files[0];
-};
+const form = ref({
+  Partenaire: "",
+});
 
-const handleAjouterAnimal = async () => {
+const handleAssignerPartenaire = async () => {
   const formData = new FormData();
-  formData.append("nom_animal", String(form.value.nom_animal));
-  formData.append("prix_animal", form.value.prix_animal);
-  formData.append("couleur_animal", String(form.value.couleur_animal));
-  formData.append(
-    "date_de_naissance_animal",
-    form.value.date_de_naissance_animal
-  );
-  formData.append("type_animal", String(form.value.type_animal));
-  formData.append("image_animal", form.image_animal);
-  console.log(formData);
+  // Set the selected Partenaire ID in the FormData
+  formData.append('partenaire_id', form.Partenaire);
+  
   await axios
-    .post("api/animal", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    })
+    .post("api/partenaires", formData)
     .then((response) => {
       toast.add({
         severity: "success",
@@ -65,7 +45,7 @@ const handleAjouterAnimal = async () => {
         life: 5000,
       });
       resetForm();
-      getAnimals();
+      getPartenaires();
     })
     .catch((error) => {
       if (error.response.data.errors) {
@@ -82,32 +62,32 @@ const handleAjouterAnimal = async () => {
     });
 };
 
-const resetForm = () => {
-  form.value.nom_animal = "";
-  form.value.prix_animal = "";
-  form.value.date_de_naissance_animal = "";
-  form.value.type_animal = "";
-  form.value.couleur_animal = "";
-  form.value.image_animal = null;
-};
 
-const products = ref();
-const formatCurrency = (value) => {
-  return value.toLocaleString("en-Maroc", {
-    style: "currency",
-    currency: "MAD",
-  });
-};
-const getSeverity = (product) => {
-  switch (product.inventoryStatus) {
-    case "EN STOCK":
-      return "success";
-    case "EN RUPTURE DE STOCK":
-      return "danger";
-    default:
-      return null;
+const Partenaires = ref([]);
+
+const getPartenaires = async () => {
+  try {
+    const response = await axios.get("api/partenaires");
+    Partenaires.value = response.data;
+  } catch (error) {
+    console.error(
+      "Erreur lors de la récupération des détails de les partanires:",
+      error
+    );
   }
 };
+
+onMounted(async () => {
+  await authStore.getUser();
+  if (authStore.user && authStore.user !== null) {
+    if (authStore.user.type === "admin") {
+      router.push("/dashboard/commandes");
+    } else {
+      router.push("/catalogue");
+    }
+  }
+  await getPartenaires();
+});
 </script>
 
 <template>
@@ -130,7 +110,7 @@ const getSeverity = (product) => {
                 <TabPanel header="Gérer Commandes">
                   <div class="card">
                     <DataTable
-                      :value="Animaux"
+                      :value="Commandes"
                       paginator
                       :rows="5"
                       tableStyle="min-width: 50rem"
@@ -143,57 +123,136 @@ const getSeverity = (product) => {
                         </div>
                       </template>
 
-                      <Column field="nom_animal" header="Nom">
+                      <Column field="NumCommande" header="Numéro de commande">
                         <template #body="slotProps">
-                          {{ slotProps.data.nom_animal }}
+                          <router-link
+                            :to="{
+                              name: 'dashboardCommandesDetails',
+                              params: { idCommande: slotProps.data.id },
+                            }"
+                            class="-m-2 block p-2 font-medium text-blue-900"
+                          >
+                            {{ slotProps.data.NumCommande }}
+                          </router-link>
                         </template>
                       </Column>
-                      <Column field="type_animal" header="Type">
+                      <Column field="status" header="Statut de paiement">
                         <template #body="slotProps">
-                          {{ slotProps.data.type_animal }}
-                        </template>
-                      </Column>
-                      <Column field="couleur_animal" header="Couleur">
-                        <template #body="slotProps">
-                          <ColorPicker
-                            v-model="slotProps.data.couleur_animal"
-                            disabled
-                          />
-                        </template>
-                      </Column>
-                      <Column field="image_animal" header="Image">
-                        <template #body="slotProps">
-                          <img
-                            :src="`http://localhost:8000/uploads/${slotProps.data.image_animal}`"
-                            :alt="slotProps.data.nom_animal"
-                            class="w-12 border-round"
-                          />
-                        </template>
-                      </Column>
-                      <Column
-                        field="date_de_naissance_animal"
-                        header="Date de Naissance"
-                      >
-                        <template #body="slotProps">
-                          {{ slotProps.data.date_de_naissance_animal }}
-                        </template>
-                      </Column>
-                      <Column field="prix_animal" header="Prix">
-                        <template #body="slotProps">
-                          {{ slotProps.data.prix_animal }} MAD
+                          <span
+                            :style="{
+                              color:
+                                slotProps.data.status === 'paye'
+                                  ? 'green'
+                                  : 'red',
+                            }"
+                          >
+                            {{
+                              slotProps.data.status === "paye"
+                                ? "Payé"
+                                : "Non payé"
+                            }}
+                          </span>
                         </template>
                       </Column>
 
+                      <Column field="livrée" header="Statut de livraison">
+                        <template #body="slotProps">
+                          <span
+                            :style="{
+                              color:
+                                slotProps.data.livrée === 'oui'
+                                  ? 'green'
+                                  : 'red',
+                            }"
+                          >
+                            {{
+                              slotProps.data.livrée === "oui"
+                                ? "Livré"
+                                : "Non livré"
+                            }}
+                          </span>
+                        </template>
+                      </Column>
+
+                      <!-- <Column field="prix_animal" header="Prix">
+                        <template #body="slotProps">
+                          {{ slotProps.data.prix_animal }} MAD
+                        </template>
+                      </Column> -->
+                      <Column field="Actions" header="Actions">
+                        <template #body="slotProps">
+                          <center>
+                            <i
+                              title="Supprimer Animal"
+                              style="font-size: 20px"
+                              class="pi pi-trash text-red-500 cursor-pointer text-lg"
+                              @click="confirmDelete(slotProps.data)"
+                            ></i>
+                          </center>
+                        </template>
+                      </Column>
                       <!-- Ajoutez d'autres colonnes selon vos besoins -->
 
                       <template #footer>
                         Au total il y a
-                        {{ Animaux ? Animaux.length : 0 }} Animaux.
+                        {{ Commandes ? Commandes.length : 0 }} Commandes.
                       </template>
                     </DataTable>
                   </div>
                 </TabPanel>
-              
+                <TabPanel header="Assigner un partenaire">
+                  <div class="card">
+                    <form @submit.prevent="handleAssignerPartenaire">
+                      <div class="space-y-12">
+                        <div class="border-b border-gray-900/10 pb-12">
+                          <h2
+                            class="text-base font-semibold leading-7 text-gray-900"
+                          >
+                            Assigner un partenaire
+                          </h2>
+
+                          <div
+                            class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6"
+                          >
+                            <div class="sm:col-span-2">
+                              <label
+                                for="region"
+                                class="block text-sm font-medium leading-6 text-gray-900"
+                                >Partenaire de livraison</label
+                              >
+                              <div class="mt-2">
+                                <select
+                                  id="Partenaire"
+                                  name="Partenaire"
+                                  v-model="form.Partenaire"
+                                  autocomplete="Partenaire"
+                                  class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:max-w-xs sm:text-sm sm:leading-6"
+                                >
+                                  <option
+                                    v-for="partenaire in Partenaires"
+                                    :key="partenaire.id"
+                                    :value="partenaire.id"
+                                  >
+                                    {{ partenaire.name }}
+                                  </option>
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="mt-6 flex items-center justify-end gap-x-6">
+                        <button
+                          type="submit"
+                          class="rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                        >
+                        Assigner 
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </TabPanel>
               </TabView>
             </div>
           </div>

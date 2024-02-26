@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Animal;
 use App\Models\Panier;
 use Illuminate\Http\Request;
 
@@ -68,10 +69,45 @@ class PanierController extends Controller
      * @param  \App\Models\Panier  $panier
      * @return \Illuminate\Http\Response
      */
-    public function show(Panier $panier)
+    public function show($idCommande)
     {
-        //
+        // Retrieve paniers associated with the specified commande
+        $paniers = Panier::where("commande_id", "=", $idCommande)->get();
+    
+        // Initialize variables to store total number of animals and total price
+        $totalAnimals = 0;
+        $totalPrice = 0;
+    
+        // Initialize an empty array to store animals
+        $animals = [];
+    
+        // Iterate through each panier to retrieve its associated animal
+        foreach ($paniers as $panier) {
+            // Retrieve the animal associated with the panier
+            $animal = $panier->animal;
+            
+            // If the animal is not null, add it to the animals array
+            if ($animal) {
+                $animals[] = $animal;
+                
+                // Increment the total number of animals
+                $totalAnimals++;
+                
+                // Add the price of the animal to the total price
+                $totalPrice += $animal->prix_animal;
+            }
+        }
+        
+        // Return the animals associated with the specified commande,
+        // along with the total number of animals and total price
+        return response()->json([
+            'animals' => $animals,
+            'totalAnimals' => $totalAnimals,
+            'totalPrice' => $totalPrice
+        ]);
     }
+    
+    
 
     /**
      * Update the specified resource in storage.

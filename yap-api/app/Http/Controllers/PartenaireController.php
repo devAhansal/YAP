@@ -71,8 +71,8 @@ class PartenaireController extends Controller
             'phone' => $request->phone,
             'date_de_naissance' => $request->date_de_naissance,
             'carte_identite' => $request->carte_identite,
-            'type' => 2,
-            'statu' => "desactiver",
+            'type' => "partenaire",
+            'statu' => 0,
 
         ]);}else{
             $Partenaire = User::create([
@@ -87,7 +87,7 @@ class PartenaireController extends Controller
                 'date_de_naissance' => $request->date_de_naissance,
                 'carte_identite' => $request->carte_identite,
                 'type' => 2,
-                'statu' => "activer",
+                'statu' => 1,
     
             ]);}
         return response()->json([

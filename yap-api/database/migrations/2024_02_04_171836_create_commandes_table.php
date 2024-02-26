@@ -19,8 +19,9 @@ return new class extends Migration
             $table->string("status");
             $table->string("livrée")->default("non");
             $table->unsignedBigInteger('user_id');
-           
+            $table->unsignedBigInteger('partenaire_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('partenaire_id')->references('id')->on('users');
             $table->timestamps();
         });
     }

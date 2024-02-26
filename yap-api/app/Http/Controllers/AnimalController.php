@@ -15,7 +15,7 @@ class AnimalController extends Controller
      */
     public function index()
     {
-        $Animaux = Animal::all();
+        $Animaux = Animal::where("status", "=", "non-paye")->get();
         return Response()->json($Animaux);
     }
 
@@ -96,8 +96,19 @@ class AnimalController extends Controller
      */
     public function update(Request $request, Animal $animal)
     {
-        //
+        try {
+            // Update the status of the animal to "paye"
+            $animal->status = 'paye';
+            $animal->save();
+
+            // Return a success response
+            return response()->json(['message' => 'Statut de l\'animal mis à jour en payé'], 200);
+        } catch (\Exception $e) {
+            // Return an error response if an exception occurs
+            return response()->json(['error' => "Échec de la mise à jour du statut de l'animal"], 500);
+        }
     }
+
 
     /**
      * Remove the specified resource from storage.
@@ -107,6 +118,15 @@ class AnimalController extends Controller
      */
     public function destroy(Animal $animal)
     {
-        //
+        try {
+            // Delete the animal
+            $animal->delete();
+
+            // Return a success response
+            return response()->json(['message' => 'Animal deleted successfully'], 200);
+        } catch (\Exception $e) {
+            // Return an error response if an exception occurs
+            return response()->json(['error' => 'Failed to delete the animal'], 500);
+        }
     }
 }

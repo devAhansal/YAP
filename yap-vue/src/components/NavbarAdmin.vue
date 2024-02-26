@@ -32,14 +32,14 @@
         </div>
         <div class="hidden md:block">
           <div class="ml-4 flex items-center md:ml-6">
-            <button
+            <!-- <button
               type="button"
               class="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
             >
               <span class="absolute -inset-1.5" />
               <span class="sr-only">View notifications</span>
               <BellIcon class="h-6 w-6" aria-hidden="true" />
-            </button>
+            </button> -->
 
             <!-- Profile dropdown -->
             <Menu as="div" class="relative ml-3">
@@ -131,14 +131,14 @@
               {{ user.email }}
             </div>
           </div>
-          <button
+          <!-- <button
             type="button"
             class="relative ml-auto flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
           >
             <span class="absolute -inset-1.5" />
             <span class="sr-only">View notifications</span>
             <BellIcon class="h-6 w-6" aria-hidden="true" />
-          </button>
+          </button> -->
         </div>
         <div class="mt-3 space-y-1 px-2">
           <DisclosureButton
@@ -177,16 +177,14 @@ const user = {
   "https://img.freepik.com/psd-gratuit/illustration-3d-personne-lunettes-soleil_23-2149436188.jpg"
 };
 const navigation = [
-  { name: "Tableau de bord", routeName: "dashboard", current: false },
+  // { name: "Tableau de bord", routeName: "dashboard", current: false },
   { name: "Animaux", routeName: "dashboardAnimaux", current: false },
   { name: "Commandes", routeName: "dashboardCommandes", current: false },
   { name: "Partenaires", routeName: "dashboardPartenaires", current: false },
 ];
 
 const userNavigation = [
-  { name: "Your Profile", href: "#", method: "" },
-  { name: "Settings", href: "#,", method: "" },
-  { name: "Sign out", href: "#", method: "logout()" },
+  { name: "se déconnecter", href: "#", method: "logout()" },
 ];
 const props = defineProps({
   // Define your props here

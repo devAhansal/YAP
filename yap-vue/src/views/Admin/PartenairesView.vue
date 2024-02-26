@@ -283,8 +283,11 @@ import { ref, onMounted } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
 import { useToast } from "primevue/usetoast";
+import { useAuthStore } from "../stores/auth";
+
 const toast = useToast();
 const router = useRouter();
+const authStore = useAuthStore();
 
 onMounted(() => {
   getPartenaires();
@@ -342,7 +345,7 @@ const handleAjouterPartenaire = async () => {
         life: 5000,
       });
       resetForm();
-      getAnimals();
+      getPartenaires();
     })
     .catch((error) => {
       if (error.response.data.errors) {
@@ -370,6 +373,15 @@ const resetForm = () => {
   form.value.email = "";
   form.value.password = "";
 };
+
+onMounted(async () => {
+  await authStore.getUser();
+  if (authStore.user && authStore.user !== null) {
+    if (authStore.user.type != "admin") {
+      router.push("/catalogue");
+    }
+  }
+});
 
 const products = ref();
 </script>

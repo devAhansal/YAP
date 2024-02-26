@@ -118,9 +118,9 @@ export const useCartStore = defineStore("cart", {
         const response = await axios.delete(
           "/api/paniers/" + commandeId + "/" + AnimalId
         );
-        return ("Animal deleted  successfully");
+        return "Animal deleted  successfully";
       } catch (error) {
-        return ("Error deleting animal");
+        return "Error deleting animal";
       }
     },
     async lastNonPayeCommande() {
@@ -130,6 +130,18 @@ export const useCartStore = defineStore("cart", {
         console.log(response.data);
       } catch (error) {
         console.error(error);
+      }
+    },
+    async updateAnimalStatusToPaye(animalId) {
+      try {
+        const response = await axios.put(
+          `/api/animal/${animalId}`
+        );
+        console.log(response.data.message); // Log the success message
+        // Handle success (e.g., show a success message to the user)
+      } catch (error) {
+        console.error("Error updating animal status:", error);
+        // Handle error (e.g., show an error message to the user)
       }
     },
   },

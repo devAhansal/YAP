@@ -12,7 +12,8 @@ class Commande extends Model
         'NumCommande',
         'status',
         'user_id',
-        'livrée'
+        'livrée',
+        'partenaire_id'
     ];
     public function paniers()
     {
